@@ -8,6 +8,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
 
 public class CCServer {
@@ -44,6 +45,13 @@ public class CCServer {
                     if(ccClient.read(in) != -1) {
                         String result = new String(in.array()).trim();
                         log("Message recieved: " + result);
+                        String reply = "";
+                        for(int i = 0; i < result.length(); i++) {
+                            reply = result.charAt(i) + reply;
+                        }
+                        Scanner input = new Scanner(System.in);
+                        reply = input.nextLine();
+                        ccClient.write(ByteBuffer.wrap(reply.getBytes("UTF-8")));
                     } else {
                         log("EOF recieved");
                         ccClient.close();
