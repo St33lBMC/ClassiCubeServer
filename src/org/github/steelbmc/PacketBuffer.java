@@ -10,19 +10,23 @@ public class PacketBuffer {
     }
 
     public PacketBuffer() {
-        dbb = new DynamicByteBuffer(1024);
+        this(1024);
     }
 
     public int readByte() {
-        return -1;
+        byte b = dbb.read();
+        return b & 0xff;
     }
 
     public byte readSByte() {
-        return -1;
+        return dbb.read();
     }
 
     public float readFByte() {
-        return 0.0f;
+        byte b = dbb.read();
+        int integerpart = b & 0xE0;
+        float floatingpart = 1.0f / (b & 0x05);
+        return integerpart + floatingpart;
     }
 
     public int readShort() {
@@ -89,8 +93,11 @@ public class PacketBuffer {
 
         private void reallocate() {
             int len = 2 * buf.capacity();
+            int oldPos = buf.position();
+            buf.position(0);
             ByteBuffer temp = ByteBuffer.allocate(len);
             temp.put(buf);
+            temp.position(oldPos);
             buf = temp;
         }
     }
